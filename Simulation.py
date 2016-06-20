@@ -12,5 +12,6 @@ req1 = Shark([800, 999])
 req1.ventral_lateralBio("requin_lateral.jpg", "requin_ventral.jpg")
 
 S = Sea(1200, 400, req1)
+#print len(S.champsDeVision(S.population[10]))
 
 

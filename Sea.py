@@ -2,7 +2,6 @@ import random
 import math
 from copy import *
 from Shark import Shark
-from Zone import Zone
 
 class Sea :
     """attributes
@@ -17,7 +16,7 @@ class Sea :
         self.population = []
         ori_shark.z = ori_shark.position_ideale
         for i in xrange(self.nb_sharks):
-          self.population.append(ori_shark)
+          self.population.append(copy(ori_shark))
           self.population[i].x = random.randint(0,500)
           self.population[i].y = random.randint(0,500)
           if (random.random() < 0.5) :
@@ -25,7 +24,12 @@ class Sea :
           else:
             self.population[i].sex = 0 #males
 
-
+    def champsDeVision (self,individu) :
+        vu=[]
+        for i in xrange (len(self.population)) :
+          if ((self.population[i].z >= individu.z) and (self.population[i].z <= (individu.z + 50)) and (self.population[i].x >= (individu.x - 50))and (self.population[i].x <= (individu.x + 50))and (self.population[i].y >= (individu.y - 50))and (self.population[i].y <= (individu.y + 50))) :
+            vu.append(self.population[i])
+        return vu
 
     def move(self):
         for i in xrange(len(self.population)):
