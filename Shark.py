@@ -25,6 +25,9 @@ class Shark :
         self.position_ideale = 0
         self.tab_memoire_lateral = []
         self.tab_memoire_ventral = []
+        self.x = 0
+        self.y = 0
+        self.z = 0
         self.fit_position = 0 #Plus ce coeff est proche de 0, mieu c'est pour la survie du requin en gros il se fait pas remarquer et survi
         self.fit_reproduction = 0 #Plus ce coeff est grand, mieu c'est pour la reproduction du requin 
         self.has_rep = False # pour savoir si le requin s est deja reproduit
@@ -33,7 +36,7 @@ class Shark :
         self.coef_biolum_lateral = 0
         self.cases_biolum_ventral = 0
         self.cases_biolum_lateral = 0
-        
+
 
 
     def ventral_lateralBio(self, file_name1, file_name2):
@@ -132,7 +135,7 @@ class Shark :
 
     def updateBiolum(self) : 
         self.pap = (self.cases_biolum_ventral + self.cases_biolum_lateral)/float(self.size) *100
-        
+
 
     def calculProfondeur(self) : #donne la profondeur ideale en fonction de la proportion de requin recouvert par les photophores
         self.position_ideale = 500 * math.exp(-0.564*math.log(self.pap)+2.31) 
