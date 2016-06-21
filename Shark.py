@@ -36,7 +36,7 @@ class Shark :
         self.coef_biolum_lateral = 0
         self.cases_biolum_ventral = 0
         self.cases_biolum_lateral = 0
-        self.age = 0
+        self.age = random.randint(0,20)
         self.sex = 2
 
 
@@ -250,4 +250,5 @@ class Shark :
         self.updateFitPosition()
         self.updateFitReproduction()
         self.updateBiolum()
+        self.calculProfondeur()
             

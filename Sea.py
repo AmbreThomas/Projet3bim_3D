@@ -29,6 +29,7 @@ class Sea :
         self.predateurs = []
         for i in xrange (nb_pred_) :
           self.predateurs.append(Predator())
+        self.cap_limite = 600.0
 
     def champsDeVision (self,individu) :
         vu=[]
@@ -39,14 +40,21 @@ class Sea :
 
     def move(self):
         for i in xrange(len(self.population)):
+            self.population[i].mise_jour_attributs()
             pas = random.randint(-10,10)
+            m = random.random()
+            if self.population[i].fit_position > 60 : 
+              p_move=0.8
+            else :
+              p_move =0.1
             r = random.random()
-            if r < 1/3.0:
-                self.population[i].x += pas
-            elif r < 2/3.0:
-                self.population[i].y += pas
-            else:
-                self.population[i].z += pas
+            if r<p_move : 
+              if r < 1/3.0:
+                  self.population[i].x += pas
+              elif r < 2/3.0:
+                  self.population[i].y += pas
+              else:
+                  self.population[i].z += pas
         for i in xrange(len(self.predateurs)) :
             pas = random.randint(-10,10)
             r = random.random()
@@ -70,40 +78,74 @@ class Sea :
                 if self.population[i].age >= 22:
                     if (random.random() < 0.5):
                         pop.append(self.population[i])
+                else :
+                  pop.append(self.population[i])
             else :
                 if self.population[i].age >= 18:
                     if (random.random() < 0.5):
                         pop.append(self.population[i])
+                else :
+                  pop.append(self.population[i])
         self.population = pop
                         
-    def mortPredateurs (self) : 
+    """def mortPredateurs (self) : 
         pop = []
         for i in xrange(len(self.predateurs)):
               if self.predateurs[i].age >= 22:
                   if (random.random() < 0.5):
                     pop.append(self.predateurs[i])   
-        self.predateurs = pop
+              else :
+                pop.append(self.population[i])
+        self.predateurs = pop"""
+    
+    def capaciteLimite(self) :
+        pop=[]
+        for i in xrange(len(self.population)):
+          if ((random.random() + 1) > len(self.population)/self.cap_limite) :
+            pop.append(self.population[i])
+        self.population = pop
+          
     
     def predation(self) :
         for i in xrange(len(self.predateurs)) :
           proies = self.champsDeVision(self.predateurs[i])
           if (len(proies) > 0) :
-            random.shuffle(proies)
-            self.population.pop(self.population.index(proies[0]))
-          
+            fitness=[] #pour pouvoir comparer les fitness des requins
+            for i,a in enumerate (proies) :
+              fitness.append(a.fit_position * a.lateral_bio) 
+            
+            fmax=max(fitness)
+            death_candidates=[] #leur indice
+            for j,a in enumerate (proies) :
+              if (a.fit_position * a.lateral_bio == fmax) : 
+                death_candidates.append(j)
+                random.shuffle(death_candidates) # on tue aleatoirement un des requins qui a la fitness position max
+            self.population.pop(self.population.index(proies[death_candidates[0]]))
+            #print "a tue", fmax    
                   
 
     def reproduction(self) : 
+        #print len(self.population)
         for i in xrange(len(self.population)) :
-          if (self.population[i].sex == 1) :
+          if (self.population[i].sex == 1 and self.population[i].age > 5 ) :
             entourage = self.champsDeVision(self.population[i])
             if (len(entourage) >0) :
               cop = []
-              for j in xrange(len(entourage)) :
-                if (entourage[j].sex == 0) :
-                  cop.append(entourage[j])
-              random.shuffle(cop)
-              self.population.append(self.moyenneDeuxRequins(self.population[i],entourage[0]))
+              lat =[] #pour pouvoir comparer les lat des requins
+              for j,a in enumerate (entourage) :
+                if (a.sex == 0 and a.age > 4) :
+                  d=abs(self.population[i].lateral_bio-a.lateral_bio)
+                  lat.append(d)
+              if (len(lat) >0 ) :    
+                latmin=min(lat)
+                for j,a in enumerate (entourage):
+                  if (latmin == abs(self.population[i].lateral_bio-a.lateral_bio)) :
+                    cop.append(a)
+                random.shuffle(cop)
+                self.population.append(self.moyenneDeuxRequins(self.population[i],cop[0]))
+                self.population[-1].toMute()
+              
+        #print len(self.population)
               
             
     def moyenneDeuxRequins (self, r1, r2) :
@@ -126,7 +168,7 @@ class Sea :
         requinou.mise_jour_attributs()
         requinou.age = 0
         if (random.random() < 0.5) :
-          self.population[i].sex = 1 #femelles
+          requinou.sex = 1 #femelles
         else:
-          self.population[i].sex = 0 #males
+          requinou.sex = 0 #males
         return requinou
