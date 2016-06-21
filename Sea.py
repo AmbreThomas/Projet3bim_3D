@@ -64,7 +64,7 @@ class Sea :
             self.predateurs[i].age += 1
 
     def mort(self):
-        pop = copy(self.population)
+        pop = []
         for i in xrange(len(self.population)):
             if (self.population[i].sex) :
                 if self.population[i].age >= 22:
@@ -74,13 +74,15 @@ class Sea :
                 if self.population[i].age >= 18:
                     if (random.random() < 0.5):
                         pop.append(self.population[i])
+        self.population = pop
                         
     def mortPredateurs (self) : 
-        pop = copy(self.predateurs)
+        pop = []
         for i in xrange(len(self.predateurs)):
               if self.predateurs[i].age >= 22:
                   if (random.random() < 0.5):
-                    pop.append(self.predateurs[i])        
+                    pop.append(self.predateurs[i])   
+        self.predateurs = pop
     
     def predation(self) :
         for i in xrange(len(self.predateurs)) :
